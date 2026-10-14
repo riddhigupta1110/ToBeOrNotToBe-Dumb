@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101113">
+<meta name="description" content="A 24/7 global news network reporting the completely insignificant events of one ordinary life.">
+<title>The Unimportant Times — Live</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #101113;
+    --surface: #17191d;
+    --line: #30343b;
+    --text: #f4f4f1;
+    --muted: #a5a9b1;
+    --red: #f04b55;
+    --red-dark: #bd2734;
+    --green: #a4e3c0;
+    --max: 1180px;
+    --radius: 16px;
+    --shadow: 0 18px 50px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5; letter-spacing: -.01em;
+  }
+  button { font: inherit; }
+  button:focus-visible, a:focus-visible, textarea:focus-visible {
+    outline: 3px solid #ffd166; outline-offset: 3px;
+  }
+  a { color: inherit; }
+  .wrap { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
+  .topline { border-bottom: 1px solid var(--line); color: var(--muted); font-size: .74rem; }
+  .topline-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:9px 0; }
+  .live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--red); margin-right:7px; box-shadow:0 0 0 4px #f04b5520; }
+  header { border-bottom: 1px solid var(--line); }
+  .masthead { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:25px 0 22px; }
+  .brand { display:flex; align-items:center; gap:13px; min-width:0; }
+  .brand-mark { display:grid; place-items:center; width:45px; height:45px; background:var(--red); color:white; border-radius:12px; font-weight:900; font-size:1.1rem; letter-spacing:-.08em; flex-shrink:0; }
+  .brand h1 { margin:0; font-family: Georgia, "Times New Roman", serif; font-size:clamp(1.3rem, 3vw, 2rem); letter-spacing:-.055em; line-height:1.05; }
+  .brand p { margin:5px 0 0; color:var(--muted); text-transform:uppercase; font-size:.66rem; letter-spacing:.16em; }
+  .edition { text-align:right; color:var(--muted); font-size:.75rem; }
+  .edition strong { display:block; color:var(--text); font-size:.86rem; font-weight:650; }
+  .ticker { display:flex; align-items:stretch; background:var(--surface); border-block:1px solid var(--line); overflow:hidden; }
+  .ticker-label { display:flex; align-items:center; gap:8px; flex-shrink:0; padding:12px 16px; background:var(--red-dark); font-size:.72rem; font-weight:850; letter-spacing:.09em; }
+  .ticker-window { overflow:hidden; min-width:0; display:flex; align-items:center; }
+  .ticker-track { display:flex; width:max-content; animation: ticker 42s linear infinite; }
+  .ticker:hover .ticker-track, .ticker:focus-within .ticker-track { animation-play-state:paused; }
+  .ticker-copy { display:flex; flex-shrink:0; align-items:center; gap:28px; padding-left:28px; color:#d5d7dc; font-size:.8rem; white-space:nowrap; }
+  .ticker-copy span::before { content:"◆"; color:var(--red); font-size:.55rem; margin-right:11px; vertical-align:2px; }
+  @keyframes ticker { to { transform:translateX(-50%); } }
+  main { padding:36px 0 64px; }
+  .eyebrow { margin:0 0 12px; color:var(--red); font-size:.7rem; font-weight:850; letter-spacing:.15em; text-transform:uppercase; }
+  .hero { display:grid; grid-template-columns:minmax(0, 1.45fr) minmax(270px, .75fr); gap:22px; align-items:stretch; }
+  .lead { position:relative; overflow:hidden; min-height:350px; padding:clamp(24px, 4vw, 46px); border:1px solid #553138; border-radius:var(--radius); background:radial-gradient(ellipse at 95% 0%, #70272f55 0, transparent 38%), linear-gradient(145deg, #21191d, #17191d 70%); box-shadow:var(--shadow); display:flex; flex-direction:column; }
+  .breaking-tag { display:inline-flex; align-items:center; gap:8px; width:max-content; padding:6px 9px; border-radius:5px; background:var(--red); color:white; font-size:.68rem; font-weight:900; letter-spacing:.12em; }
+  .lead h2 { max-width:750px; margin:24px 0 16px; font-family:Georgia, "Times New Roman", serif; font-size:clamp(2.25rem, 5.2vw, 4.35rem); font-weight:600; letter-spacing:-.06em; line-height:1.03; }
+  .lead-summary { max-width:620px; color:#c0c1c7; margin:0; font-size:1rem; }
+  .lead-bottom { margin-top:auto; padding-top:30px; display:flex; justify-content:space-between; align-items:end; gap:16px; color:var(--muted); font-size:.76rem; }
+  .live-status { display:inline-flex; align-items:center; gap:7px; color:var(--green); font-weight:700; }
+  .status-panel { padding:25px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); display:flex; flex-direction:column; }
+  .panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:23px; }
+  .panel-heading h3 { margin:0; font-size:1rem; letter-spacing:-.02em; }
+  .mini-label { color:var(--muted); font-size:.68rem; text-transform:uppercase; letter-spacing:.12em; text-align:right; }
+  .onair { display:inline-flex; align-items:center; gap:7px; width:max-content; margin-bottom:16px; padding:5px 9px; border-radius:5px; background:#2a1d20; color:#ff9ca3; font-size:.66rem; font-weight:900; letter-spacing:.12em; border:1px solid #5a3037; }
+  .status-icon { display:grid; place-items:center; width:54px; height:54px; border:1px solid #44404a; border-radius:15px; background:#29252b; font-size:1.7rem; margin-bottom:16px; }
+  .status-panel h4 { margin:0 0 7px; font-size:1.25rem; letter-spacing:-.035em; }
+  .status-panel .status-description { margin:0 0 22px; color:var(--muted); font-size:.88rem; min-height:42px; }
+  .role-note { margin:0 0 6px; padding:12px; border:1px dashed #4a4f58; border-radius:10px; background:#1b1d22; color:#c9cbd0; font-size:.78rem; }
+  .button-row { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
+  .btn { display:inline-flex; justify-content:center; align-items:center; gap:9px; border:1px solid transparent; border-radius:10px; padding:11px 14px; font-size:.83rem; font-weight:800; cursor:pointer; transition:transform .16s ease, background .16s ease, border-color .16s ease; text-decoration:none; }
+  .btn:hover { transform:translateY(-1px); }
+  .btn-primary { background:var(--red); color:#fff; }
+  .btn-primary:hover { background:#ff6069; }
+  .btn-secondary { background:#24272d; color:var(--text); border-color:#3a3e46; }
+  .btn-secondary:hover { background:#2d3138; }
+  .status-confirmation { min-height:20px; margin:10px 0 0; color:var(--green); font-size:.75rem; }
+  .section-heading { display:flex; justify-content:space-between; align-items:end; gap:18px; margin:42px 0 17px; }
+  .section-heading h2 { margin:0; font-family:Georgia, "Times New Roman", serif; font-size:clamp(1.6rem, 3vw, 2.15rem); font-weight:600; letter-spacing:-.045em; }
+  .section-heading p { margin:5px 0 0; color:var(--muted); font-size:.85rem; }
+  .section-note { color:var(--muted); font-size:.72rem; text-align:right; }
+  .stats { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:13px; }
+  .stat { min-height:137px; padding:20px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
+  .stat-label { color:var(--muted); font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; }
+  .stat-value { display:block; margin:14px 0 7px; font-family:Georgia, "Times New Roman", serif; font-size:clamp(1.5rem, 3vw, 2rem); line-height:1; letter-spacing:-.05em; }
+  .stat-foot { color:#858a94; font-size:.72rem; }
+  .bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+  .info-card { border:1px solid var(--line); border-radius:var(--radius); padding:24px; background:var(--surface); }
+  .info-card h3 { margin:0 0 7px; font-size:1rem; }
+  .info-card > p { margin:0; color:var(--muted); font-size:.85rem; }
+  .quote { margin:20px 0 0; padding:15px 16px; border-left:3px solid var(--red); border-radius:0 9px 9px 0; background:#202126; color:#e8e8e7; font-family:Georgia,serif; font-size:1.15rem; }
+  .share-line { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-top:20px; }
+  .share-line small { color:var(--muted); font-size:.75rem; }
+  .share-fallback { margin-top:14px; padding:14px; border:1px dashed #4a4f58; border-radius:10px; background:#1b1d22; }
+  .share-fallback[hidden] { display:none; }
+  .share-fallback p { margin:0 0 8px; color:var(--muted); font-size:.75rem; }
+  .share-fallback textarea { width:100%; resize:none; color:var(--text); background:#101215; border:1px solid #3a3e46; border-radius:8px; padding:10px; font:inherit; font-size:.8rem; }
+  .share-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  footer { border-top:1px solid var(--line); padding:22px 0 28px; color:#858a94; font-size:.73rem; margin-top:20px; }
+  .footer-inner { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  @media (max-width: 850px) {
+    .hero { grid-template-columns:1fr; }
+    .lead { min-height:320px; }
+    .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width: 560px) {
+    .wrap { width:min(calc(100% - 28px),var(--max)); }
+    .topline-inner { font-size:.66rem; }
+    .edition { display:none; }
+    .masthead { padding:19px 0; }
+    .brand-mark { width:39px; height:39px; }
+    .brand p { font-size:.57rem; letter-spacing:.1em; }
+    .ticker-label { padding:11px 10px; font-size:.64rem; }
+    .ticker-copy { font-size:.73rem; }
+    main { padding-top:23px; }
+    .lead { padding:24px 20px; min-height:345px; }
+    .lead h2 { font-size:2.55rem; margin-top:22px; }
+    .lead-summary { font-size:.91rem; }
+    .lead-bottom { align-items:start; flex-direction:column; gap:9px; }
+    .status-panel { padding:21px; }
+    .panel-heading { margin-bottom:20px; }
+    .status-panel .status-description { min-height:0; margin-bottom:20px; }
+    .button-row .btn { flex:1; }
+    .section-heading { align-items:start; flex-direction:column; margin-top:34px; }
+    .section-note { text-align:left; }
+    .stats { gap:9px; }
+    .stat { min-height:125px; padding:15px; }
+    .stat-value { font-size:1.65rem; }
+    .bottom-grid { grid-template-columns:1fr; }
+    .info-card { padding:20px; }
+    .share-line { align-items:start; flex-direction:column; }
+    .share-line .btn { width:100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="topline">
+    <div class="wrap topline-inner">
+      <span><span class="live-dot"></span>LIVE BROADCAST · 24/7 UNNECESSARY COVERAGE</span>
+      <span id="currentDate">TODAY'S EDITION</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="wrap masthead">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">UT</div>
+        <div>
+          <h1>The Unimportant Times</h1>
+          <p>All the news that doesn't matter</p>
+        </div>
+      </div>
+      <div class="edition">
+        <strong>INDEPENDENTLY IRRELEVANT</strong>
+        <span>Est. for no particular reason</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="ticker" aria-label="Useless news ticker">
+    <div class="ticker-label"><span class="live-dot" style="background:white;box-shadow:none"></span>NEWS TICKER</div>
+    <div class="ticker-window">
+      <div class="ticker-track" id="tickerTrack">
+        <div class="ticker-copy" id="tickerCopyA">
+          <span>No significant developments have occurred.</span><span>Sources confirm that nothing has changed.</span><span>More updates expected, although nobody requested them.</span><span>This ticker is moving faster than the news.</span>
+        </div>
+        <div class="ticker-copy" id="tickerCopyB" aria-hidden="true">
+          <span>No significant developments have occurred.</span><span>Sources confirm that nothing has changed.</span><span>More updates expected, although nobody requested them.</span><span>This ticker is moving faster than the news.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="hero" aria-labelledby="headline">
+      <article class="lead">
+        <p class="eyebrow">The world's least urgent newsroom</p>
+        <div class="breaking-tag"><span aria-hidden="true">●</span> BREAKING NEWS</div>
+        <h2 id="headline" aria-live="polite">Person has opened a website for absolutely no reason.</h2>
+        <p class="lead-summary" id="headlineSummary">In a development of negligible consequence, our only source confirms that this broadcast is still happening.</p>
+        <div class="lead-bottom">
+          <span class="live-status"><span class="live-dot" style="background:var(--green);box-shadow:none"></span> LIVE FROM NOWHERE IMPORTANT</span>
+          <span id="updatedAt">Updated just now</span>
+        </div>
+      </article>
+
+      <aside class="status-panel" aria-labelledby="statusHeading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" style="margin-bottom:5px">Live from the field</p>
+            <h3 id="statusHeading">Our only correspondent</h3>
+          </div>
+          <span class="mini-label">Location:<br>irrelevant</span>
+        </div>
+        <span class="onair"><span class="live-dot" style="margin-right:0;box-shadow:none"></span> ON AIR</span>
+        <div class="status-icon" id="statusIcon" aria-hidden="true">🪑</div>
+        <h4 id="statusTitle">Doing absolutely nothing</h4>
+        <p class="status-description" id="statusDescription">Currently reported activity. Verified by nobody.</p>
+        <p class="role-note">Also the editor, the camera operator, and the entire audience.</p>
+        <div class="button-row">
+          <button class="btn btn-primary" id="randomBtn" type="button">Generate another non-story ↻</button>
+        </div>
+        <p class="status-confirmation" id="statusConfirmation" aria-live="polite">Correspondent is on air and doing nothing.</p>
+      </aside>
+    </section>
+
+    <section aria-labelledby="statsHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Independent analysis</p>
+          <h2 id="statsHeading">Network performance</h2>
+          <p>Our numbers are technically numbers.</p>
+        </div>
+        <div class="section-note">SOURCE: VIBES</div>
+      </div>
+      <div class="stats">
+        <article class="stat">
+          <span class="stat-label">People who care</span>
+          <strong class="stat-value">0</strong>
+          <span class="stat-foot">A stable and trusted figure</span>
+        </article>
+        <article class="stat">
+          <span class="stat-label">Global importance</span>
+          <strong class="stat-value">0.001%</strong>
+          <span class="stat-foot">Rounded up for morale</span>
+        </article>
+        <article class="stat">
+          <span class="stat-label">Newsworthiness</span>
+          <strong class="stat-value">Negligible</strong>
+          <span class="stat-foot">Experts are unsurprised</span>
+        </article>
+        <article class="stat">
+          <span class="stat-label">Public interest</span>
+          <strong class="stat-value">Pending</strong>
+          <span class="stat-foot">The public has not responded</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="bottom-grid" aria-label="Broadcast details and sharing">
+      <article class="info-card">
+        <p class="eyebrow">Official statement</p>
+        <h3>Developments from our newsroom</h3>
+        <p id="newsroomCopy">Our correspondent is currently doing absolutely nothing. The newsroom considers this a developing situation because the alternative is admitting there is no news.</p>
+        <blockquote class="quote" id="quote">“We are monitoring the situation closely, despite there being nothing to monitor.”</blockquote>
+      </article>
+      <article class="info-card">
+        <p class="eyebrow">Public service announcement</p>
+        <h3>Inform someone who didn't ask</h3>
+        <p>Share this critically unimportant development with a friend, relative, or person who has made the mistake of giving you their attention.</p>
+        <div class="share-line">
+          <small id="sharePreview">Current headline: Person has opened a website for absolutely no reason.</small>
+          <button class="btn btn-primary" id="shareBtn" type="button">Share this important news ↗</button>
+        </div>
+        <p class="status-confirmation" id="shareConfirmation" aria-live="polite"></p>
+        <div class="share-fallback" id="shareFallback" hidden>
+          <p>Copying is blocked here. Select and copy this manually, or use a link:</p>
+          <textarea id="shareText" readonly rows="3" aria-label="Text to share"></textarea>
+          <div class="share-links">
+            <a class="btn btn-secondary" id="waLink" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a class="btn btn-secondary" id="xLink" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year"></span> The Unimportant Times. No rights were meaningfully exercised.</span>
+      <span>Broadcasting anyway since approximately just now.</span>
+    </div>
+  </footer>
+
+<script>
+(() => {
+  "use strict";
+
+  const reports = {
+    nothing: {
+      label: "Doing absolutely nothing", icon: "🪑",
+      headline: [
+        "Person continues doing absolutely nothing.",
+        "BREAKING: Nothing has happened, and it continues to happen.",
+        "Correspondent remains stationary. Nation remains unaffected."
+      ],
+      summary: [
+        "A quiet but ongoing situation. No action is required from the public.",
+        "Sources close to the situation confirm that no situation is developing.",
+        "Experts say the event has had no measurable impact on anything."
+      ],
+      newsroom: "Our correspondent is currently doing absolutely nothing. The newsroom considers this a developing situation because the alternative is admitting there is no news."
+    },
+    water: {
+      label: "Drinking water", icon: "🥤",
+      headline: [
+        "BREAKING: Person has consumed a liquid essential to human survival.",
+        "Hydration confirmed. Global events continue without interruption.",
+        "Exclusive: Water has been consumed. More water may follow."
+      ],
+      summary: [
+        "The glass has been lowered. Analysts are calling it a routine hydration event.",
+        "Sources confirm the liquid was water. No sponsorship deal has been announced.",
+        "Medical experts recommend water; our newsroom recommends not reporting this."
+      ],
+      newsroom: "A glass of water has been consumed. The newsroom has dispatched no correspondents, because the correspondent is also the person drinking the water."
+    },
+    procrastinating: {
+      label: "Procrastinating", icon: "🕰️",
+      headline: [
+        "DEVELOPING: Important task postponed in favour of this broadcast.",
+        "Person delays responsibility. Responsibility declines to comment.",
+        "Exclusive: Procrastination continues ahead of schedule."
+      ],
+      summary: [
+        "The task remains untouched, but this update has been delivered with impressive efficiency.",
+        "Sources say the person will begin shortly. The definition of shortly remains disputed.",
+        "Productivity experts have been informed. They have not been invited to respond."
+      ],
+      newsroom: "A task of unknown importance has been delayed. We will provide updates instead of doing it."
+    },
+    screen: {
+      label: "Staring at a screen", icon: "🖥️",
+      headline: [
+        "Person stares at screen while reporting on staring at a screen.",
+        "In a stunning development, screen remains directly in front of person.",
+        "Screen time rises by one extremely predictable moment."
+      ],
+      summary: [
+        "The screen is on. The person is looking at it. Our investigation is complete.",
+        "Witnesses confirm the activity resembles the activity used to access this report.",
+        "No eye contact with the outside world has been reported."
+      ],
+      newsroom: "Our correspondent is staring at a screen to tell you that they are staring at a screen. Journalism has reached its natural conclusion."
+    },
+    productive: {
+      label: "Pretending to be productive", icon: "📋",
+      headline: [
+        "Person opens a document. Productivity remains under investigation.",
+        "BUSINESS UPDATE: Several tabs open; progress unconfirmed.",
+        "Person appears busy. Independent verification is unavailable."
+      ],
+      summary: [
+        "A serious expression has been observed. No completed tasks have been verified.",
+        "The presence of multiple browser tabs has been mistaken for progress.",
+        "Colleagues are advised not to interrupt this highly decorative work session."
+      ],
+      newsroom: "The correspondent has arranged several windows on a screen and is awaiting the feeling of accomplishment."
+    },
+    snack: {
+      label: "Investigating the snack situation", icon: "🍪",
+      headline: [
+        "Person opens cupboard. Snack situation remains fluid.",
+        "BREAKING: Kitchen inspection underway with no clear objectives.",
+        "Snack-related inquiry launched. Hunger has not issued a statement."
+      ],
+      summary: [
+        "The investigation is expected to conclude when something edible is located.",
+        "Sources say the fridge has been opened for reasons that remain classified.",
+        "No snack has been confirmed at this stage of the inquiry."
+      ],
+      newsroom: "Our correspondent is examining available snacks. The newsroom recognises this as a conflict of interest."
+    },
+    walking: {
+      label: "Moving to another room", icon: "🚶",
+      headline: [
+        "Person relocates approximately several metres. Analysts baffled.",
+        "BREAKING: Change of scenery produces no change in global affairs.",
+        "Correspondent arrives in another room. Story remains the same."
+      ],
+      summary: [
+        "The journey has concluded safely. No international borders were crossed.",
+        "The person is now elsewhere, though the meaning of elsewhere is limited.",
+        "Travel experts confirm this was technically a journey."
+      ],
+      newsroom: "A short-distance relocation has occurred. No travel documents were required, and no tourism board has responded."
+    },
+    thinking: {
+      label: "Thinking about doing something", icon: "💭",
+      headline: [
+        "Person considers action. Action has not yet been taken.",
+        "Plans to make plans are reportedly progressing.",
+        "A thought has entered the building. No follow-up action confirmed."
+      ],
+      summary: [
+        "The proposal is in its earliest stage: existing exclusively as a thought.",
+        "Sources say a decision may be made after further thinking about making a decision.",
+        "The newsroom will not speculate on whether anything will happen."
+      ],
+      newsroom: "A potential action is being considered. The committee responsible for taking the action has not been formed."
+    },
+    refreshing: {
+      label: "Refreshing a page for no reason", icon: "🔄",
+      headline: [
+        "Person refreshes page. The internet remains broadly unchanged.",
+        "BREAKING: Same information returns in a slightly newer loading state.",
+        "Refresh number unknown. Expectations remain low."
+      ],
+      summary: [
+        "The page has been asked to reveal new information, despite no reason to expect any.",
+        "The refresh was successful. The purpose of the refresh remains elusive.",
+        "Experts confirm that pressing the same button repeatedly is still possible."
+      ],
+      newsroom: "A page has been refreshed. Our technology desk reports that the page looks almost exactly as it did before."
+    },
+    sleepy: {
+      label: "Being operationally sleepy", icon: "😴",
+      headline: [
+        "Person's energy levels enter an unconfirmed downward trend.",
+        "BREAKING: Eyelids reportedly considering reduced operating hours.",
+        "Sleepiness detected. Productivity has declined to a theoretical value."
+      ],
+      summary: [
+        "The correspondent remains technically available but spiritually offline.",
+        "Sources confirm a strong desire to do less, preferably horizontally.",
+        "No further updates are expected unless the person wakes up or remembers this page."
+      ],
+      newsroom: "The newsroom is running on minimal energy. This is not a metaphor for our budget, which is also minimal."
+    }
+  };
+
+  const el = id => document.getElementById(id);
+  let lastHeadline = "Person has opened a website for absolutely no reason.";
+  let lastReportKey = "nothing";
+
+  function pickDifferent(items, current) {
+    if (!items || items.length < 2) return (items && items[0]) || "";
+    const choices = items.filter(item => item !== current);
+    const pool = choices.length ? choices : items;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+  }
+
+  function setTickerFor(report) {
+    const extras = [
+      "This remains the least consequential story of the hour.",
+      "Officials urge the public to continue not paying attention.",
+      "The newsroom confirms this update could have been an email.",
+      "No action is required. No action was ever required.",
+      "Our commitment to irrelevance remains unwavering.",
+      "The correspondent has not been asked for comment. The correspondent is also the editor.",
+      "This ticker is the most active department in the building.",
+      "A spokesperson was unavailable because there is no spokesperson."
+    ];
+    const messages = [
+      pickDifferent(report.headline, lastHeadline),
+      ...extras.slice().sort(() => Math.random() - 0.5).slice(0, 4)
+    ];
+    const markup = messages.map(message => `<span>${escapeHtml(message)}</span>`).join("");
+    el("tickerCopyA").innerHTML = markup;
+    el("tickerCopyB").innerHTML = markup;
+  }
+
+  function generateBulletin(automatic = false) {
+    const keys = Object.keys(reports).filter(key => key !== lastReportKey);
+    const key = keys[Math.floor(Math.random() * keys.length)] || "nothing";
+    const report = reports[key];
+    const headline = pickDifferent(report.headline, lastHeadline);
+    const summary = pickDifferent(report.summary, el("headlineSummary").textContent);
+
+    lastReportKey = key;
+    lastHeadline = headline;
+
+    // Status panel always reflects the story's activity, so it never looks stale or detached
+    el("statusIcon").textContent = report.icon;
+    el("statusTitle").textContent = report.label;
+    el("statusDescription").textContent = "Currently reported activity. Verified by nobody.";
+    el("statusConfirmation").textContent = automatic
+      ? "Status updated automatically. Nobody asked."
+      : "Status updated on request. Still nobody asked.";
+
+    el("headline").textContent = headline;
+    el("headlineSummary").textContent = summary;
+    el("newsroomCopy").textContent = report.newsroom;
+    el("quote").textContent = "“" + pickDifferent([
+      "We are monitoring the situation closely, despite there being nothing to monitor.",
+      "Our sources confirm this report has consumed valuable seconds.",
+      "We take this extremely unimportant matter with no degree of seriousness.",
+      "The facts are limited. So is the public's interest.",
+      "We will keep you updated whether or not anything happens.",
+      "The correspondent has been notified. The correspondent is also reading this.",
+      "This newsroom operates independently of motivation."
+    ], el("quote").textContent.replace(/[“”]/g, "")) + "”";
+    el("updatedAt").textContent = automatic ? "Auto-updated just now" : "Updated on request";
+    el("sharePreview").textContent = "Current headline: " + headline;
+    setTickerFor(report);
+  }
+
+  el("randomBtn").addEventListener("click", () => generateBulletin(false));
+
+  /* ---------- Sharing: share sheet -> clipboard -> execCommand -> manual box ---------- */
+  function legacyCopy(text) {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) { /* blocked in iframes / insecure contexts; fall through */ }
+    return legacyCopy(text);
+  }
+
+  function showManualShare(text, url) {
+    const box = el("shareFallback");
+    const ta = el("shareText");
+    ta.value = text;
+    box.hidden = false;
+    ta.focus();
+    ta.select();
+    el("waLink").href = "https://wa.me/?text=" + encodeURIComponent(text);
+    el("xLink").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(lastHeadline) + (url ? "&url=" + encodeURIComponent(url) : "");
+  }
+
+  el("shareBtn").addEventListener("click", async () => {
+    const out = el("shareConfirmation");
+    const pageUrl = /^https?:/i.test(window.location.href) ? window.location.href : "";
+    const body = lastHeadline + "\n\nThe Unimportant Times — all the news that doesn't matter.";
+    const fullText = pageUrl ? body + "\n" + pageUrl : body;
+    const shareData = pageUrl
+      ? { title: "The Unimportant Times", text: body, url: pageUrl }
+      : { title: "The Unimportant Times", text: body };
+
+    el("shareFallback").hidden = true;
+
+    if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+      try {
+        await navigator.share(shareData);
+        out.textContent = "News distributed. The consequences are still being assessed.";
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") {
+          out.textContent = "Sharing cancelled. Public interest remains unchanged.";
+          return;
+        }
+      }
+    }
+
+    if (await copyText(fullText)) {
+      out.textContent = "Headline copied. You may now inconvenience another person.";
+      return;
+    }
+
+    out.textContent = "Your browser blocked copying. Grab it below.";
+    showManualShare(fullText, pageUrl);
+  });
+
+  const now = new Date();
+  el("currentDate").textContent = new Intl.DateTimeFormat(undefined, {
+    weekday: "short", day: "numeric", month: "short", year: "numeric"
+  }).format(now).toUpperCase();
+  el("year").textContent = now.getFullYear();
+
+  generateBulletin(true);
+  setInterval(() => generateBulletin(true), 26000);
+
+})();
+</script>
+</body>
+</html>
